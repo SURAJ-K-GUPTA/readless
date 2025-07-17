@@ -43,8 +43,8 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="max-w-sm mx-auto mt-20 p-6 border rounded shadow bg-white">
-      <h1 className="text-2xl font-bold mb-4">Sign In</h1>
+    <div className="max-w-sm mx-auto mt-20 p-6 border rounded shadow bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-700">
+      <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Sign In</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="email" className="block mb-1">Email</Label>
@@ -72,7 +72,7 @@ export default function SignInPage() {
             placeholder="Your password"
           />
         </div>
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
         <Button
           type="submit"
           className="w-full"
@@ -81,7 +81,7 @@ export default function SignInPage() {
           {loading ? "Signing in..." : "Sign In"}
         </Button>
       </form>
-      <div className="mt-4 text-center text-sm">
+      <div className="mt-4 text-center text-sm text-gray-700 dark:text-gray-300">
         Don&apos;t have an account? <a href="/signup" className="underline">Sign up</a>
       </div>
     </div>

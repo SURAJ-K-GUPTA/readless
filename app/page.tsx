@@ -119,6 +119,6 @@ export default function HomePage() {
       ) : (
         <BookmarkList bookmarks={filteredBookmarks} onDelete={handleDelete} />
       )}
-    </main>
+      </main>
   );
 }

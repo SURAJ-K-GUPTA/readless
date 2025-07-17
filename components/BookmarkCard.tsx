@@ -29,7 +29,7 @@ export function BookmarkCard({ bookmark, onDelete }: BookmarkCardProps) {
   return (
     <>
       <Card
-        className="flex flex-col gap-2 p-4 h-full cursor-pointer hover:bg-gray-50 transition"
+        className="flex flex-col gap-2 p-4 h-full cursor-pointer bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 shadow hover:bg-gray-50 dark:hover:bg-zinc-800 transition"
         onClick={handleCardClick}
       >
         <div className="flex items-center gap-2">
@@ -46,7 +46,7 @@ export function BookmarkCard({ bookmark, onDelete }: BookmarkCardProps) {
             {bookmark.title || bookmark.url}
           </a>
         </div>
-        <div className="text-sm text-gray-700 line-clamp-4 whitespace-pre-line">
+        <div className="text-sm text-gray-700 dark:text-gray-200 line-clamp-4 whitespace-pre-line">
           {bookmark.summary}
         </div>
         {bookmark.tags && bookmark.tags.length > 0 && (
@@ -100,7 +100,7 @@ export function BookmarkCard({ bookmark, onDelete }: BookmarkCardProps) {
 
       {/* Details Dialog */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-full w-[95vw] sm:max-w-lg p-0">
+        <DialogContent className="max-w-full w-[95vw] sm:max-w-lg p-0 dark:bg-zinc-900">
           <div className="p-4 max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{bookmark.title || bookmark.url}</DialogTitle>
@@ -116,11 +116,19 @@ export function BookmarkCard({ bookmark, onDelete }: BookmarkCardProps) {
               )}
               <span className="text-xs text-gray-500 break-all">{bookmark.url}</span>
             </div>
-            <div className="prose prose-sm max-w-none mb-2">
+            <div className="prose prose-sm max-w-none mb-2 dark:prose-invert">
               {bookmark.summary ? (
-                <ReactMarkdown>{bookmark.summary}</ReactMarkdown>
+                <ReactMarkdown
+                  components={{
+                    img: ({node, ...props}) => (
+                      <img {...props} className="max-w-xs h-auto rounded shadow mx-auto my-2" />
+                    )
+                  }}
+                >
+                  {bookmark.summary}
+                </ReactMarkdown>
               ) : (
-                <span className="text-gray-500">No summary available.</span>
+                <span className="text-gray-500 dark:text-gray-400">No summary available.</span>
               )}
             </div>
             {bookmark.tags && bookmark.tags.length > 0 && (

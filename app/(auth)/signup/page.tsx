@@ -40,8 +40,8 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="max-w-sm mx-auto mt-20 p-6 border rounded shadow bg-white">
-      <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
+    <div className="max-w-sm mx-auto mt-20 p-6 border rounded shadow bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-700">
+      <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Sign Up</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="email" className="block mb-1">Email</Label>
@@ -63,7 +63,7 @@ export default function SignUpPage() {
             required
           />
         </div>
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
         <Button
           type="submit"
           className="w-full"
@@ -72,7 +72,7 @@ export default function SignUpPage() {
           {loading ? "Signing up..." : "Sign Up"}
         </Button>
       </form>
-      <div className="mt-4 text-center text-sm">
+      <div className="mt-4 text-center text-sm text-gray-700 dark:text-gray-300">
         Already have an account? <a href="/signin" className="underline">Sign in</a>
       </div>
     </div>
