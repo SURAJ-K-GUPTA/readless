@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import ReactMarkdown from "react-markdown";
-// TODO: Use shadcn/ui Badge for tags when available
 
 export interface BookmarkCardProps {
   bookmark: {
@@ -52,10 +52,9 @@ export function BookmarkCard({ bookmark, onDelete }: BookmarkCardProps) {
         {bookmark.tags && bookmark.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1">
             {bookmark.tags.map(tag => (
-              <span key={tag} className="bg-gray-200 text-xs px-2 py-0.5 rounded">
-                {/* TODO: Replace with <Badge> from shadcn/ui */}
+              <Badge key={tag} variant="secondary" className="text-xs px-2 py-0.5">
                 {tag}
-              </span>
+              </Badge>
             ))}
           </div>
         )}
@@ -127,10 +126,9 @@ export function BookmarkCard({ bookmark, onDelete }: BookmarkCardProps) {
             {bookmark.tags && bookmark.tags.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-1">
                 {bookmark.tags.map(tag => (
-                  <span key={tag} className="bg-gray-200 text-xs px-2 py-0.5 rounded">
-                    {/* TODO: Replace with <Badge> from shadcn/ui */}
+                  <Badge key={tag} variant="secondary" className="text-xs px-2 py-0.5">
                     {tag}
-                  </span>
+                  </Badge>
                 ))}
               </div>
             )}
