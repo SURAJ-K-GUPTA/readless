@@ -1,8 +1,12 @@
 "use client";
 import { useState } from "react";
-import { z } from "zod";
 import { userSchema } from "@/zod/userSchema";
-// import Button, Input, etc. from shadcn/ui if available
+
+// Try to use shadcn/ui components if available
+// Check for Button, Input in components/ui
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -43,37 +47,43 @@ export default function SignInPage() {
       <h1 className="text-2xl font-bold mb-4">Sign In</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block mb-1">Email</label>
-          <input
+          <Label htmlFor="email" className="block mb-1">Email</Label>
+          <Input
+            id="email"
             type="email"
-            className="w-full border rounded px-3 py-2"
+            className="w-full"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            autoComplete="email"
+            placeholder="you@example.com"
           />
         </div>
         <div>
-          <label className="block mb-1">Password</label>
-          <input
+          <Label htmlFor="password" className="block mb-1">Password</Label>
+          <Input
+            id="password"
             type="password"
-            className="w-full border rounded px-3 py-2"
+            className="w-full"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
+            autoComplete="current-password"
+            placeholder="Your password"
           />
         </div>
         {error && <div className="text-red-600 text-sm">{error}</div>}
-        <button
+        <Button
           type="submit"
-          className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
+          className="w-full"
           disabled={loading}
         >
           {loading ? "Signing in..." : "Sign In"}
-        </button>
+        </Button>
       </form>
       <div className="mt-4 text-center text-sm">
-        Don't have an account? <a href="/signup" className="underline">Sign up</a>
+        Don&apos;t have an account? <a href="/signup" className="underline">Sign up</a>
       </div>
     </div>
   );
-} 
+}

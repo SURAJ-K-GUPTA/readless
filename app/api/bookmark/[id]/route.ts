@@ -4,13 +4,14 @@ import Bookmark from "@/models/Bookmark";
 import { getUserFromToken } from "@/lib/authHelpers";
 
 // DELETE /api/bookmark/:id
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect();
     const user = await getUserFromToken();
     if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const deleted = await Bookmark.findOneAndDelete({ _id: params.id, userId: user.id });
+    const { id } = await params;
+    const deleted = await Bookmark.findOneAndDelete({ _id: id, userId: user.id });
     if (!deleted) return NextResponse.json({ message: "Not found" }, { status: 404 });
 
     return NextResponse.json({ message: "Bookmark deleted" }, { status: 200 });
@@ -20,15 +21,16 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
 }
 
 // PATCH /api/bookmark/:id
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect();
     const user = await getUserFromToken();
     if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
+    const { id } = await params;
     const data = await req.json();
     const updated = await Bookmark.findOneAndUpdate(
-      { _id: params.id, userId: user.id },
+      { _id: id, userId: user.id },
       { $set: data },
       { new: true }
     );
