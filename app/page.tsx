@@ -117,7 +117,27 @@ export default function HomePage() {
       ) : error ? (
         <div className="text-center text-red-600 py-8">{error}</div>
       ) : (
-        <BookmarkList bookmarks={filteredBookmarks} onDelete={handleDelete} />
+        <BookmarkList
+          bookmarks={filteredBookmarks}
+          onDelete={handleDelete}
+          onReorder={async (newOrderIds: string[]) => {
+            // Reorder the main bookmarks state (not just filtered)
+            setBookmarks(prev => {
+              const idToBookmark = Object.fromEntries(prev.map(b => [b._id, b]));
+              return newOrderIds.map((id, idx) => ({ ...idToBookmark[id], orderIndex: idx }));
+            });
+            // Persist new order to backend
+            await Promise.all(
+              newOrderIds.map(async (id, idx) => {
+                await fetch(`/api/bookmark/${id}`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ orderIndex: idx }),
+                });
+              })
+            );
+          }}
+        />
       )}
       </main>
   );
