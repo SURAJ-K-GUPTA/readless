@@ -6,6 +6,20 @@ import { treeifyError } from "zod";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/auth";
 import { getUserFromToken } from "@/lib/authHelpers";
+import { canCallJina, recordJinaCall, extractMetadataFromURL } from "@/lib/metaAndRateLimit";
+
+async function fetchJinaSummary(url: string): Promise<string> {
+  try {
+    const target = encodeURIComponent(url);
+    const res = await fetch(`https://r.jina.ai/${target}`);
+    if (!res.ok) throw new Error("Jina API error");
+    const summary = await res.text();
+    // Optionally trim summary if too long (e.g., 2000 chars)
+    return summary.length > 2000 ? summary.slice(0, 2000) + "..." : summary;
+  } catch {
+    return "Summary temporarily unavailable.";
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,26 +33,41 @@ export async function POST(req: NextRequest) {
 
     const cookieStore = cookies();
     const token = (await cookieStore).get?.("token")?.value ?? (await cookieStore).get("token")?.value;
-    
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-
     const decoded = verifyToken(token) as { id: string };
-    const { url, title, summary, favicon, tags, orderIndex } = parsed.data;
+    const { url } = parsed.data;
+
+    // Extract metadata if not provided
+    const extracted = await extractMetadataFromURL(url);
+    const title = parsed.data.title || extracted.title || extracted.ogTitle || url;
+    const favicon = parsed.data.favicon || extracted.favicon;
+    const tags = parsed.data.tags || extracted.tags;
+
+    // Rate limit Jina API calls per IP
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    let finalSummary = parsed.data.summary;
+    if (!finalSummary || finalSummary === "") {
+      if (!canCallJina(ip)) {
+        finalSummary = "Summary temporarily unavailable. (Rate limit exceeded)";
+      } else {
+        finalSummary = await fetchJinaSummary(url);
+        recordJinaCall(ip);
+      }
+    }
 
     const newBookmark = await Bookmark.create({
       userId: decoded.id,
       url,
       title,
-      summary,
+      summary: finalSummary,
       favicon,
       tags,
-      orderIndex,
+      orderIndex: parsed.data.orderIndex,
     });
 
     return NextResponse.json({ message: "Bookmark saved", bookmark: newBookmark }, { status: 201 });
-
   } catch (error) {
     console.error("Bookmark save error:", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });

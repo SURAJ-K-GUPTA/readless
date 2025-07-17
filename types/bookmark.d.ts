@@ -5,9 +5,9 @@ import { Document, Types } from "mongoose";
 export interface IBookmark extends Document {
   userId: Types.ObjectId;
   url: string;
-  title: string;
+  title?: string;
   favicon?: string;
-  summary: string;
+  summary?: string;
   tags?: string[];
   orderIndex?: number;
   createdAt?: Date;

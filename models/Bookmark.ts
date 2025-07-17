@@ -17,19 +17,21 @@ const BookmarkSchema = new Schema<IBookmark>(
     },
     title: {
       type: String,
-      required: true,
+      required: false,
     },
     favicon: {
       type: String,
       default: "",
+      required: false,
     },
     summary: {
       type: String,
-      required: true,
+      required: false,
     },
     tags: {
       type: [String],
       default: [],
+      required: false,
     },
     orderIndex: {
       type: Number,
