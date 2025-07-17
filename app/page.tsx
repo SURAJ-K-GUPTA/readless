@@ -47,11 +47,22 @@ export default function HomePage() {
     return Array.from(tagSet).sort();
   }, [bookmarks]);
 
-  // Filter tags by search input
-  const filteredTags = useMemo(() => {
-    if (!tagSearch.trim()) return allTags;
-    return allTags.filter(tag => tag.toLowerCase().includes(tagSearch.toLowerCase()));
-  }, [allTags, tagSearch]);
+  // Filter bookmarks by search input (title or tags) and selected tag
+  const filteredBookmarks = useMemo(() => {
+    let filtered = bookmarks;
+    if (selectedTag) {
+      filtered = filtered.filter((bm: any) => bm.tags && bm.tags.includes(selectedTag));
+    }
+    if (tagSearch.trim()) {
+      const search = tagSearch.toLowerCase();
+      filtered = filtered.filter((bm: any) => {
+        const titleMatch = bm.title?.toLowerCase().includes(search);
+        const tagMatch = (bm.tags || []).some((tag: string) => tag.toLowerCase().includes(search));
+        return titleMatch || tagMatch;
+      });
+    }
+    return filtered;
+  }, [bookmarks, selectedTag, tagSearch]);
 
   async function handleDelete(id: string) {
     try {
@@ -74,14 +85,14 @@ export default function HomePage() {
         <div className="mb-4 flex flex-col gap-2 items-start">
           <input
             type="text"
-            placeholder="Search tags..."
+            placeholder="Search bookmarks..."
             value={tagSearch}
             onChange={e => setTagSearch(e.target.value)}
             className="mb-2 px-2 py-1 border rounded text-sm w-48"
           />
           <div className="flex flex-wrap gap-2 items-center">
             <span className="text-sm font-semibold mr-2">Filter by tag:</span>
-            {filteredTags.map(tag => (
+            {allTags.map(tag => (
               <button
                 key={tag}
                 className={`px-2 py-1 rounded text-xs border ${selectedTag === tag ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"}`}
@@ -106,7 +117,7 @@ export default function HomePage() {
       ) : error ? (
         <div className="text-center text-red-600 py-8">{error}</div>
       ) : (
-        <BookmarkList bookmarks={bookmarks} onDelete={handleDelete} />
+        <BookmarkList bookmarks={filteredBookmarks} onDelete={handleDelete} />
       )}
     </main>
   );
