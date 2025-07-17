@@ -2,17 +2,21 @@
 import { useEffect, useState } from "react";
 import { AddBookmarkForm } from "@/components/AddBookmarkForm";
 import { BookmarkList } from "@/components/BookmarkList";
+import { useMemo } from "react";
 
 export default function HomePage() {
   const [bookmarks, setBookmarks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [tagSearch, setTagSearch] = useState("");
 
-  async function fetchBookmarks() {
+  async function fetchBookmarks(tag?: string | null) {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/bookmark");
+      const url = tag ? `/api/bookmark?tag=${encodeURIComponent(tag)}` : "/api/bookmark";
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
         setBookmarks(data.bookmarks);
@@ -29,11 +33,27 @@ export default function HomePage() {
   }
 
   useEffect(() => {
-    fetchBookmarks();
-  }, []);
+    fetchBookmarks(selectedTag);
+  }, [selectedTag]);
+
+  // Extract unique tags from bookmarks
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    bookmarks.forEach(bm => {
+      if (bm.tags && Array.isArray(bm.tags)) {
+        bm.tags.forEach((tag: string) => tagSet.add(tag));
+      }
+    });
+    return Array.from(tagSet).sort();
+  }, [bookmarks]);
+
+  // Filter tags by search input
+  const filteredTags = useMemo(() => {
+    if (!tagSearch.trim()) return allTags;
+    return allTags.filter(tag => tag.toLowerCase().includes(tagSearch.toLowerCase()));
+  }, [allTags, tagSearch]);
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this bookmark?")) return;
     try {
       const res = await fetch(`/api/bookmark/${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -50,6 +70,37 @@ export default function HomePage() {
     <main className="max-w-4xl mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Your Bookmarks</h1>
       <AddBookmarkForm onAdd={handleAdd} />
+      {allTags.length > 0 && (
+        <div className="mb-4 flex flex-col gap-2 items-start">
+          <input
+            type="text"
+            placeholder="Search tags..."
+            value={tagSearch}
+            onChange={e => setTagSearch(e.target.value)}
+            className="mb-2 px-2 py-1 border rounded text-sm w-48"
+          />
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-sm font-semibold mr-2">Filter by tag:</span>
+            {filteredTags.map(tag => (
+              <button
+                key={tag}
+                className={`px-2 py-1 rounded text-xs border ${selectedTag === tag ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"}`}
+                onClick={() => setSelectedTag(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+            {selectedTag && (
+              <button
+                className="ml-2 px-2 py-1 rounded text-xs border bg-gray-200 text-gray-700"
+                onClick={() => setSelectedTag(null)}
+              >
+                Clear filter
+              </button>
+            )}
+          </div>
+        </div>
+      )}
       {loading ? (
         <div className="text-center py-8">Loading...</div>
       ) : error ? (
