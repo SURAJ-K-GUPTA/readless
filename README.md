@@ -55,11 +55,11 @@ Update title, summary, tags, or order index
 
 Frontend
 
-Next.js 14 (App Router)
+Next.js 15 (App Router)
 
 React 18
 
-Tailwind CSS
+Tailwind CSS v4
 
 
 Backend
