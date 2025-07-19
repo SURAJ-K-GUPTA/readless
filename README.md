@@ -1,36 +1,207 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🧠 ReadLess - Smart Link Saver with Auto-Summary
 
-## Getting Started
+ReadLess is a full-stack web application that lets users save URLs, automatically fetch their metadata (title, favicon, summary), and organize them efficiently. Built with Next.js, MongoDB, and JWT authentication, it focuses on simplicity, speed, and smart reading.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🚀 Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+✅ User Authentication
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Register/Login with email + password
 
-## Learn More
+JWT stored securely in httpOnly cookies
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+🔖 Bookmark Management
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Save a URL and get:
 
-## Deploy on Vercel
+Page title
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Favicon
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Summary (via Jina AI API)
+
+
+Optional: drag-and-drop reorder via orderIndex
+
+Add tags for filtering
+
+
+📑 View Bookmarks
+
+Paginated and filterable bookmark list
+
+Search by tag
+
+
+❌ Delete Bookmark
+
+Delete your saved bookmarks safely
+
+
+🛠 Edit Bookmark
+
+Update title, summary, tags, or order index
+
+
+
+
+---
+
+🧱 Tech Stack
+
+Frontend
+
+Next.js 14 (App Router)
+
+React 18
+
+Tailwind CSS
+
+
+Backend
+
+Next.js API routes
+
+MongoDB + Mongoose
+
+JWT (jsonwebtoken)
+
+bcryptjs (for hashing passwords)
+
+cheerio (for HTML scraping)
+
+zod (for input validation)
+
+
+
+---
+
+📂 Folder Structure (Relevant)
+
+app/
+├── api/
+│   ├── user/
+│   │   └── route.ts         # POST: login/register
+│   ├── user/me/route.ts     # GET: current user
+│   ├── user/logout/route.ts # DELETE: logout
+│   ├── bookmark/
+│   │   └── route.ts         # GET/POST bookmarks
+│   └── bookmark/[id]/
+│       └── route.ts         # PATCH/DELETE bookmarks
+models/
+├── User.ts
+├── Bookmark.ts
+lib/
+├── dbConnect.ts
+├── auth.ts
+├── authHelpers.ts
+zod/
+├── userSchema.ts
+├── bookmarkSchema.ts
+
+
+---
+
+🧪 Validation (Zod)
+
+All user and bookmark inputs are schema-validated before DB writes
+
+Errors are formatted using treeifyError
+
+
+
+---
+
+🔐 Middleware
+
+middleware.ts protects /api/bookmark/* routes via JWT auth.
+
+
+---
+
+🌐 API Endpoints
+
+Method	Route	Description
+
+POST	/api/user	Register or Login
+GET	/api/user/me	Fetch current user
+DELETE	/api/user/logout	Logout
+POST	/api/bookmark	Save a bookmark
+GET	/api/bookmark	List bookmarks (filter/paginate)
+PATCH	/api/bookmark/:id	Update bookmark
+DELETE	/api/bookmark/:id	Delete bookmark
+
+
+
+---
+
+🔗 Summary Generation
+
+Jina AI summarization endpoint is used:
+
+GET https://r.jina.ai/http://<encoded-url>
+
+Backend fetches this directly (not client)
+
+Rate limiting and error fallback are handled
+
+
+
+---
+
+🛠 Local Setup
+
+# 1. Clone repo
+$ git clone https://github.com/yourname/readless.git
+
+# 2. Install deps
+$ cd readless
+$ npm install
+
+# 3. Add .env.local
+MONGODB_URI=your_mongo_uri
+JWT_SECRET=your_secret_key
+
+# 4. Run dev server
+$ npm run dev
+
+
+---
+
+💡 What I'd Do Next
+
+Add user onboarding / tutorial
+
+Improve drag-drop reorder UI
+
+Add full-text search on titles/summaries
+
+Create shareable links (public view)
+
+
+
+---
+
+📸 Screenshots
+
+  
+
+
+---
+
+🧑‍💻 Author
+
+Suraj Kumar Gupta
+B.Tech CSE, REC Mainpuri
+
+
+---
+
+📃 License
+
+MIT
+
